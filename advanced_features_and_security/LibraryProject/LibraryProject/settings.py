@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l(l!5$)piz(sbu7c9*iuxze!wt3iqb9v^^ji^cp^9d4817%o6p'
+# In production, this should be loaded from an environment variable
+# Generate a new secret key with: python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-l(l!5$)piz(sbu7c9*iuxze!wt3iqb9v^^ji^cp^9d4817%o6p')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Use environment variable to control DEBUG setting
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS configuration for production security
+# In production, this should be set to your domain names
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if os.environ.get('DJANGO_ALLOWED_HOSTS') else []
 
 
 # Application definition
@@ -143,15 +149,38 @@ SECURE_BROWSER_XSS_FILTER = True  # Enables XSS filtering in browsers
 SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents MIME type sniffing
 X_FRAME_OPTIONS = 'DENY'  # Prevents page from being displayed in frame/iframe
 
-# HTTPS settings (enable in production with SSL/TLS)
-# SECURE_SSL_REDIRECT = True  # Redirects all HTTP requests to HTTPS
-# SECURE_HSTS_SECONDS = 31536000  # HTTP Strict Transport Security (1 year)
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to subdomains
-# SECURE_HSTS_PRELOAD = True  # Allow inclusion in HSTS preload lists
+# ===============================
+# HTTPS SECURITY CONFIGURATION
+# ===============================
+# These settings enforce HTTPS connections and implement security best practices
+# for production deployments. They should be enabled when SSL/TLS certificates
+# are properly configured on your web server.
 
-# Cookie security settings (enable in production with HTTPS)
-# CSRF_COOKIE_SECURE = True  # CSRF cookie sent over HTTPS only
-# SESSION_COOKIE_SECURE = True  # Session cookie sent over HTTPS only
+# Environment-aware HTTPS configuration
+# These settings are enabled based on environment variables for flexible deployment
+ENABLE_HTTPS = os.environ.get('ENABLE_HTTPS', 'False') == 'True'
+
+# HTTPS Redirect Configuration
+# When enabled, all HTTP requests will be automatically redirected to HTTPS
+# This ensures that all communication between clients and server is encrypted
+SECURE_SSL_REDIRECT = ENABLE_HTTPS  # Force redirect from HTTP to HTTPS
+
+# HTTP Strict Transport Security (HSTS) Configuration
+# HSTS tells browsers to only access the site via HTTPS for a specified duration
+# This prevents protocol downgrade attacks and cookie hijacking
+SECURE_HSTS_SECONDS = 31536000 if ENABLE_HTTPS else 0  # 1 year (31,536,000 seconds)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = ENABLE_HTTPS  # Apply HSTS policy to all subdomains
+SECURE_HSTS_PRELOAD = ENABLE_HTTPS  # Allow site to be included in browser HSTS preload lists
+
+# Additional HTTPS Security Settings
+# These settings enhance the security of HTTPS connections
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if ENABLE_HTTPS else None
+SECURE_SSL_HOST = os.environ.get('SECURE_SSL_HOST', None)  # Set to specific domain in production
+
+# Cookie Security Settings for HTTPS
+# These settings ensure that sensitive cookies are only transmitted over secure connections
+CSRF_COOKIE_SECURE = ENABLE_HTTPS  # CSRF protection cookies sent over HTTPS only
+SESSION_COOKIE_SECURE = ENABLE_HTTPS  # Session cookies sent over HTTPS only
 CSRF_COOKIE_HTTPONLY = True  # Prevents JavaScript access to CSRF cookie
 SESSION_COOKIE_HTTPONLY = True  # Prevents JavaScript access to session cookie
 SESSION_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy for session cookies
@@ -173,3 +202,74 @@ CSP_IMG_SRC = "'self' data: https:"  # Allow images from same origin, data URLs,
 CSP_FONT_SRC = "'self' https:"  # Allow fonts from same origin and HTTPS
 CSP_CONNECT_SRC = "'self'"  # Allow AJAX requests to same origin only
 CSP_FRAME_ANCESTORS = "'none'"  # Prevent embedding in frames (same as X-Frame-Options: DENY)
+
+# ===============================
+# SECURITY IMPLEMENTATION SUMMARY
+# ===============================
+"""
+This Django application implements comprehensive security measures to protect against
+common web vulnerabilities and ensure secure data transmission. Below is a detailed
+explanation of all security configurations implemented:
+
+1. HTTPS ENFORCEMENT:
+   - SECURE_SSL_REDIRECT: Automatically redirects all HTTP requests to HTTPS
+   - SECURE_HSTS_SECONDS: Implements HTTP Strict Transport Security for 1 year
+   - SECURE_HSTS_INCLUDE_SUBDOMAINS: Extends HSTS policy to all subdomains
+   - SECURE_HSTS_PRELOAD: Allows inclusion in browser HSTS preload lists
+   - SECURE_PROXY_SSL_HEADER: Handles HTTPS detection behind reverse proxies
+
+2. SECURE COOKIE CONFIGURATION:
+   - CSRF_COOKIE_SECURE: CSRF tokens only sent over HTTPS connections
+   - SESSION_COOKIE_SECURE: Session cookies only sent over HTTPS connections
+   - CSRF_COOKIE_HTTPONLY: Prevents JavaScript access to CSRF tokens
+   - SESSION_COOKIE_HTTPONLY: Prevents JavaScript access to session cookies
+   - SESSION_COOKIE_SAMESITE: Strict same-site policy for session cookies
+   - CSRF_COOKIE_SAMESITE: Strict same-site policy for CSRF cookies
+
+3. SECURITY HEADERS IMPLEMENTATION:
+   - X_FRAME_OPTIONS: Prevents clickjacking attacks by denying frame embedding
+   - SECURE_CONTENT_TYPE_NOSNIFF: Prevents MIME type confusion attacks
+   - SECURE_BROWSER_XSS_FILTER: Enables browser XSS protection filters
+   - SECURE_REFERRER_POLICY: Controls referrer information leakage
+
+4. CONTENT SECURITY POLICY (CSP):
+   - CSP_DEFAULT_SRC: Restricts resource loading to same origin
+   - CSP_SCRIPT_SRC: Controls JavaScript execution sources
+   - CSP_STYLE_SRC: Controls CSS loading sources
+   - CSP_IMG_SRC: Controls image loading sources
+   - CSP_FONT_SRC: Controls font loading sources
+   - CSP_CONNECT_SRC: Controls AJAX/WebSocket connection sources
+   - CSP_FRAME_ANCESTORS: Prevents embedding in frames
+
+5. SESSION SECURITY:
+   - SESSION_EXPIRE_AT_BROWSER_CLOSE: Sessions expire when browser closes
+   - SESSION_COOKIE_AGE: Session timeout after 1 hour of inactivity
+   - Secure session handling prevents session hijacking and fixation attacks
+
+6. ENVIRONMENT-AWARE CONFIGURATION:
+   - ENABLE_HTTPS: Environment variable controls HTTPS enforcement
+   - DEBUG: Environment variable controls debug mode
+   - ALLOWED_HOSTS: Environment variable controls allowed hostnames
+   - SECRET_KEY: Environment variable for production secret key
+
+7. MIDDLEWARE SECURITY:
+   - SecurityHeadersMiddleware: Custom middleware for additional security headers
+   - CSRF protection middleware enabled
+   - Security middleware enabled for Django's built-in protections
+
+DEPLOYMENT CONSIDERATIONS:
+- For production deployment, set ENABLE_HTTPS=True in environment
+- Configure proper SSL/TLS certificates on web server
+- Set appropriate ALLOWED_HOSTS for your domain
+- Use environment variables for sensitive configuration
+- Test SSL configuration with SSL Labs or similar tools
+
+SECURITY TESTING:
+- Run 'python manage.py check --deploy' for security audit
+- Test HTTPS redirect and security headers
+- Verify CSP policy effectiveness
+- Monitor SSL certificate expiration
+
+For detailed deployment instructions, see HTTPS_DEPLOYMENT.md
+For security review and analysis, see SECURITY_REVIEW.md
+"""

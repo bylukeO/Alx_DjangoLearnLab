@@ -60,4 +60,26 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
         response['X-XSS-Protection'] = '1; mode=block'
         response['Referrer-Policy'] = getattr(settings, 'SECURE_REFERRER_POLICY', 'strict-origin-when-cross-origin')
         
+        # Add HTTPS-specific security headers when HTTPS is enabled
+        if getattr(settings, 'ENABLE_HTTPS', False):
+            # HTTP Strict Transport Security (HSTS) header
+            hsts_max_age = getattr(settings, 'SECURE_HSTS_SECONDS', 31536000)
+            hsts_include_subdomains = getattr(settings, 'SECURE_HSTS_INCLUDE_SUBDOMAINS', True)
+            hsts_preload = getattr(settings, 'SECURE_HSTS_PRELOAD', True)
+            
+            hsts_value = f'max-age={hsts_max_age}'
+            if hsts_include_subdomains:
+                hsts_value += '; includeSubDomains'
+            if hsts_preload:
+                hsts_value += '; preload'
+            
+            response['Strict-Transport-Security'] = hsts_value
+            
+            # Add additional HTTPS security headers
+            response['X-Forwarded-Proto'] = 'https'
+        
+        # Add security headers for preventing common attacks
+        response['X-Permitted-Cross-Domain-Policies'] = 'none'  # Prevent cross-domain access
+        response['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'  # Restrict browser features
+        
         return response

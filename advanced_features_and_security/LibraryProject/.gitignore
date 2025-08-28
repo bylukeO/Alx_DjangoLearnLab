@@ -1,0 +1,313 @@
+# ===================================
+# Django Security .gitignore
+# ===================================
+# This file prevents sensitive information from being committed to version control
+# Includes environment files, secrets, credentials, and other confidential data
+
+# ===================================
+# ENVIRONMENT FILES (CRITICAL SECURITY)
+# ===================================
+# Never commit environment files containing secrets and credentials
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+.env.test
+.environment
+*.env
+env/
+venv/
+
+# ===================================
+# DJANGO SPECIFIC FILES
+# ===================================
+# Django secret key and sensitive settings
+local_settings.py
+settings_local.py
+settings_production.py
+
+# Database files (may contain sensitive data)
+*.db
+*.sqlite
+*.sqlite3
+db.sqlite3
+*.db-journal
+
+# Django migrations (optional - comment out if you want to track them)
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Django collected static files
+staticfiles/
+static_root/
+/static/
+/media/
+
+# Django cache and session files
+django_cache/
+.cache/
+
+# ===================================
+# SSL/TLS CERTIFICATES AND KEYS
+# ===================================
+# Never commit SSL certificates, private keys, or CA files
+*.pem
+*.key
+*.crt
+*.cert
+*.ca-bundle
+*.p12
+*.pfx
+ssl/
+certs/
+certificates/
+private/
+
+# ===================================
+# LOGS AND DEBUG FILES
+# ===================================
+# Log files may contain sensitive information
+*.log
+logs/
+debug.log
+error.log
+access.log
+django.log
+security.log
+
+# Debug and profiling files
+*.prof
+.debug/
+
+# ===================================
+# BACKUP AND TEMPORARY FILES
+# ===================================
+# Database backups and dumps
+*.sql
+*.dump
+*.bak
+backup/
+backups/
+dumps/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# ===================================
+# PYTHON SPECIFIC
+# ===================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+.ENV/
+.env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ===================================
+# IDE AND EDITOR FILES
+# ===================================
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===================================
+# OPERATING SYSTEM FILES
+# ===================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Linux
+*~
+
+# ===================================
+# CLOUD AND DEPLOYMENT SPECIFIC
+# ===================================
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Heroku
+.heroku/
+
+# AWS
+.aws/
+.elasticbeanstalk/
+
+# Google Cloud
+.gcloud/
+.google/
+
+# ===================================
+# SECURITY AND CREDENTIALS
+# ===================================
+# API keys and tokens
+*.token
+*.key
+api_keys.txt
+secrets.txt
+credentials.json
+service-account.json
+
+# OAuth and authentication files
+.oauth
+oauth.json
+client_secret*.json
+
+# Password files
+passwords.txt
+.htpasswd
+
+# ===================================
+# DEVELOPMENT AND TESTING
+# ===================================
+# Test files and results
+.coverage
+coverage/
+.pytest_cache/
+.tox/
+test-results/
+test_*.db
+
+# Local development files
+local/
+dev/
+development/
+
+# Node.js (if using frontend tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===================================
+# MONITORING AND ANALYTICS
+# ===================================
+# Monitoring configuration
+monitoring.conf
+*.monitoring
+
+# Analytics data
+analytics/
+metrics/
+
+# ===================================
+# CUSTOM APPLICATION FILES
+# ===================================
+# Add your specific application files here
+# Example:
+# uploads/
+# user_data/
+# private_files/
+
+# ===================================
+# SECURITY NOTES
+# ===================================
+# This .gitignore file is designed to prevent accidental exposure of:
+# 1. Environment variables and configuration files
+# 2. Database files containing user data
+# 3. SSL certificates and private keys  
+# 4. Log files that may contain sensitive information
+# 5. Backup files and database dumps
+# 6. API keys, tokens, and credentials
+# 7. Development and testing artifacts
+#
+# IMPORTANT: 
+# - Always review files before committing
+# - Use 'git status' to check what will be committed
+# - Consider using 'git-secrets' tool for additional protection
+# - Regularly audit your repository for accidentally committed secrets
+# - Use environment variables for all sensitive configuration
+#
+# If you accidentally commit sensitive data:
+# 1. Remove it from the repository immediately
+# 2. Change any exposed credentials
+# 3. Consider the data compromised
+# 4. Use 'git filter-branch' or 'BFG Repo-Cleaner' to remove from history
