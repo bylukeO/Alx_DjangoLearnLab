@@ -1,0 +1,47 @@
+{% extends 'bookshelf/base.html' %}
+
+{% block title %}{{ book.title }} - Bookshelf{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1>{{ book.title }}</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Book Details</h5>
+                <p class="card-text">
+                    <strong>Title:</strong> {{ book.title }}<br>
+                    <strong>Author:</strong> {{ book.author }}<br>
+                    <strong>Publication Year:</strong> {{ book.publication_year }}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6>Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'book_list' %}" class="btn btn-outline-secondary">Back to List</a>
+                    {% if perms.bookshelf.can_edit %}
+                        <a href="{% url 'book_edit' book.pk %}" class="btn btn-warning">Edit Book</a>
+                    {% endif %}
+                    {% if perms.bookshelf.can_delete %}
+                        <a href="{% url 'book_delete' book.pk %}" class="btn btn-danger">Delete Book</a>
+                    {% endif %}
+                </div>
+                <hr>
+                <small class="text-muted">
+                    <strong>Your permissions:</strong><br>
+                    {% if perms.bookshelf.can_view %}✓ View{% else %}✗ View{% endif %}<br>
+                    {% if perms.bookshelf.can_create %}✓ Create{% else %}✗ Create{% endif %}<br>
+                    {% if perms.bookshelf.can_edit %}✓ Edit{% else %}✗ Edit{% endif %}<br>
+                    {% if perms.bookshelf.can_delete %}✓ Delete{% else %}✗ Delete{% endif %}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

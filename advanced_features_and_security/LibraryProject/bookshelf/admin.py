@@ -58,9 +58,20 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
+    """Admin configuration for Book model with permissions info."""
     list_display = ('title', 'author', 'publication_year')
     list_filter = ('author', 'publication_year')
     search_fields = ('title', 'author')
+    
+    def has_module_permission(self, request):
+        """Allow access to the Book admin if user has any book permission."""
+        return (
+            request.user.has_perm('bookshelf.can_view') or
+            request.user.has_perm('bookshelf.can_create') or
+            request.user.has_perm('bookshelf.can_edit') or
+            request.user.has_perm('bookshelf.can_delete') or
+            super().has_module_permission(request)
+        )
 
 
 # Register the custom user model with the custom admin
