@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcopy:*)",
+      "Bash(robocopy:*)",
+      "Bash(cp:*)",
+      "Bash(python manage.py startapp:*)",
+      "Bash(python manage.py:*)",
+      "Bash(python test:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
