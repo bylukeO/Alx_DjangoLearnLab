@@ -16,7 +16,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'LibraryProject.settings')
 django.setup()
 
-from accounts.models import CustomUser
+from bookshelf.models import CustomUser
 
 def test_custom_user_creation():
     """Test creating users with the custom user model."""
