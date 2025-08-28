@@ -18,7 +18,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
 from bookshelf.models import Book, CustomUser
-from bookshelf.views import BookForm
+from bookshelf.forms import BookForm
 
 
 class SecurityTestCase(TestCase):

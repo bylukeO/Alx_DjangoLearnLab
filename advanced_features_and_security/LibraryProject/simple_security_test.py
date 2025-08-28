@@ -17,7 +17,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'LibraryProject.settings')
 django.setup()
 
 # Now import Django modules after setup
-from bookshelf.views import BookForm
+from bookshelf.forms import BookForm
 
 def test_form_validation():
     """Test form validation and XSS protection."""
@@ -82,10 +82,10 @@ def test_form_validation():
     long_form = BookForm(data=long_data)
     
     if long_form.is_valid():
-        print("❌ Length validation failed")
+        print("[FAIL] Length validation failed")
     else:
         if 'title' in long_form.errors:
-            print("✅ Length validation working")
+            print("[PASS] Length validation working")
             print(f"   Error: {long_form.errors['title'][0]}")
     
     # Test year validation

@@ -2,80 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required, login_required
 from django.http import HttpResponseForbidden
 from django.contrib import messages
-from django import forms
-from django.core.exceptions import ValidationError
 from django.utils.html import escape
-import bleach
-import re
 from .models import Book
-
-
-class BookForm(forms.ModelForm):
-    """
-    Secure form for creating and editing books with input validation.
-    Implements XSS protection through input sanitization and validation.
-    """
-    class Meta:
-        model = Book
-        fields = ['title', 'author', 'publication_year']
-        widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'maxlength': 200}),
-            'author': forms.TextInput(attrs={'class': 'form-control', 'maxlength': 100}),
-            'publication_year': forms.NumberInput(attrs={'class': 'form-control', 'min': 1000, 'max': 2030}),
-        }
-    
-    def clean_title(self):
-        """
-        Validate and sanitize book title to prevent XSS attacks.
-        """
-        title = self.cleaned_data.get('title')
-        if title:
-            # Remove any HTML tags and sanitize input
-            title = bleach.clean(title.strip(), tags=[], strip=True)
-            
-            # Validate title length and content
-            if len(title) < 1:
-                raise ValidationError("Title cannot be empty.")
-            if len(title) > 200:
-                raise ValidationError("Title cannot exceed 200 characters.")
-            
-            # Check for potentially malicious patterns
-            if re.search(r'<script|javascript:|data:', title, re.IGNORECASE):
-                raise ValidationError("Invalid characters in title.")
-                
-        return title
-    
-    def clean_author(self):
-        """
-        Validate and sanitize author name to prevent XSS attacks.
-        """
-        author = self.cleaned_data.get('author')
-        if author:
-            # Remove any HTML tags and sanitize input
-            author = bleach.clean(author.strip(), tags=[], strip=True)
-            
-            # Validate author length and content
-            if len(author) < 1:
-                raise ValidationError("Author name cannot be empty.")
-            if len(author) > 100:
-                raise ValidationError("Author name cannot exceed 100 characters.")
-            
-            # Check for potentially malicious patterns
-            if re.search(r'<script|javascript:|data:', author, re.IGNORECASE):
-                raise ValidationError("Invalid characters in author name.")
-                
-        return author
-    
-    def clean_publication_year(self):
-        """
-        Validate publication year to ensure reasonable values.
-        """
-        year = self.cleaned_data.get('publication_year')
-        if year is not None:
-            current_year = 2030  # Allow some future publications
-            if year < 1000 or year > current_year:
-                raise ValidationError(f"Publication year must be between 1000 and {current_year}.")
-        return year
+from .forms import BookForm
 
 
 @permission_required('bookshelf.can_view', raise_exception=True)
