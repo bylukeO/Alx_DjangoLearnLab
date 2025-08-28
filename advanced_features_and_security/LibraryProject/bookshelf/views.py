@@ -4,7 +4,8 @@ from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.utils.html import escape
 from .models import Book
-from .forms import BookForm, ExampleForm
+from .forms import BookForm
+from .forms import ExampleForm
 
 
 @permission_required('bookshelf.can_view', raise_exception=True)
