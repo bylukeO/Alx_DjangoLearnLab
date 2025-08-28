@@ -12,6 +12,10 @@ from django.views import View
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django import forms
 from django.http import HttpResponseForbidden
+from django.core.exceptions import ValidationError
+from django.utils.html import escape
+import bleach
+import re
 
 # Function-based view to list all books (HTML template)
 def list_books(request):
@@ -81,11 +85,45 @@ def librarian_view(request):
 def member_view(request):
     return render(request, 'relationship_app/member_view.html')
 
-# Book form for add/edit
+# Secure Book form for add/edit with input validation
 class BookForm(forms.ModelForm):
+    """
+    Secure form for creating and editing books with input validation.
+    Implements XSS protection through input sanitization and validation.
+    """
     class Meta:
         model = Book
         fields = ['title', 'author']
+        widgets = {
+            'title': forms.TextInput(attrs={'maxlength': 200}),
+            'author': forms.TextInput(attrs={'maxlength': 100}),
+        }
+    
+    def clean_title(self):
+        """Validate and sanitize book title to prevent XSS attacks."""
+        title = self.cleaned_data.get('title')
+        if title:
+            title = bleach.clean(title.strip(), tags=[], strip=True)
+            if len(title) < 1:
+                raise ValidationError("Title cannot be empty.")
+            if len(title) > 200:
+                raise ValidationError("Title cannot exceed 200 characters.")
+            if re.search(r'<script|javascript:|data:', title, re.IGNORECASE):
+                raise ValidationError("Invalid characters in title.")
+        return title
+    
+    def clean_author(self):
+        """Validate and sanitize author name to prevent XSS attacks."""
+        author = self.cleaned_data.get('author')
+        if author:
+            author = bleach.clean(author.strip(), tags=[], strip=True)
+            if len(author) < 1:
+                raise ValidationError("Author name cannot be empty.")
+            if len(author) > 100:
+                raise ValidationError("Author name cannot exceed 100 characters.")
+            if re.search(r'<script|javascript:|data:', author, re.IGNORECASE):
+                raise ValidationError("Invalid characters in author name.")
+        return author
 
 @permission_required('relationship_app.can_add_book', raise_exception=True)
 def add_book(request):

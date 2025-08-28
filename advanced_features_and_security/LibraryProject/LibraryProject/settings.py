@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'LibraryProject.security_middleware.SecurityHeadersMiddleware',  # Custom security headers middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -129,3 +130,46 @@ AUTH_USER_MODEL = 'bookshelf.CustomUser'
 # Media files (for profile photos)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# ===============================
+# SECURITY SETTINGS
+# ===============================
+
+# SECURITY WARNING: Set DEBUG to False in production
+# DEBUG = False  # Enable this in production
+
+# Security middleware settings
+SECURE_BROWSER_XSS_FILTER = True  # Enables XSS filtering in browsers
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents MIME type sniffing
+X_FRAME_OPTIONS = 'DENY'  # Prevents page from being displayed in frame/iframe
+
+# HTTPS settings (enable in production with SSL/TLS)
+# SECURE_SSL_REDIRECT = True  # Redirects all HTTP requests to HTTPS
+# SECURE_HSTS_SECONDS = 31536000  # HTTP Strict Transport Security (1 year)
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to subdomains
+# SECURE_HSTS_PRELOAD = True  # Allow inclusion in HSTS preload lists
+
+# Cookie security settings (enable in production with HTTPS)
+# CSRF_COOKIE_SECURE = True  # CSRF cookie sent over HTTPS only
+# SESSION_COOKIE_SECURE = True  # Session cookie sent over HTTPS only
+CSRF_COOKIE_HTTPONLY = True  # Prevents JavaScript access to CSRF cookie
+SESSION_COOKIE_HTTPONLY = True  # Prevents JavaScript access to session cookie
+SESSION_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy for session cookies
+CSRF_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy for CSRF cookies
+
+# Session security
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Sessions expire when browser closes
+SESSION_COOKIE_AGE = 3600  # Session timeout in seconds (1 hour)
+
+# Additional security headers
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'  # Controls referrer information
+
+# Content Security Policy (CSP) settings
+# Basic CSP implementation without external dependencies
+CSP_DEFAULT_SRC = "'self'"  # Only allow resources from same origin
+CSP_SCRIPT_SRC = "'self' 'unsafe-inline'"  # Allow inline scripts (adjust as needed)
+CSP_STYLE_SRC = "'self' 'unsafe-inline'"  # Allow inline styles (adjust as needed)
+CSP_IMG_SRC = "'self' data: https:"  # Allow images from same origin, data URLs, and HTTPS
+CSP_FONT_SRC = "'self' https:"  # Allow fonts from same origin and HTTPS
+CSP_CONNECT_SRC = "'self'"  # Allow AJAX requests to same origin only
+CSP_FRAME_ANCESTORS = "'none'"  # Prevent embedding in frames (same as X-Frame-Options: DENY)

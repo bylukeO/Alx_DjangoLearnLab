@@ -7,7 +7,8 @@
       "Bash(python manage.py startapp:*)",
       "Bash(python manage.py:*)",
       "Bash(python test:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []
