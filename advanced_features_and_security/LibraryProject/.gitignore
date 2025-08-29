@@ -1,13 +1,3 @@
-# ===================================
-# Django Security .gitignore
-# ===================================
-# This file prevents sensitive information from being committed to version control
-# Includes environment files, secrets, credentials, and other confidential data
-
-# ===================================
-# ENVIRONMENT FILES (CRITICAL SECURITY)
-# ===================================
-# Never commit environment files containing secrets and credentials
 .env
 .env.local
 .env.production
@@ -21,8 +11,6 @@ venv/
 
 # ===================================
 # DJANGO SPECIFIC FILES
-# ===================================
-# Django secret key and sensitive settings
 local_settings.py
 settings_local.py
 settings_production.py
