@@ -1,0 +1,181 @@
+# ===================================
+# ENVIRONMENT VARIABLES AND CONFIG
+# ===================================
+# Environment files containing sensitive data
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+.env.test
+.environment
+*.env
+env/
+venv/
+
+# ===================================
+# DJANGO SPECIFIC FILES
+# ===================================
+# Local settings that may contain secrets
+local_settings.py
+settings_local.py
+settings_production.py
+
+# Database files (may contain sensitive data)
+*.db
+*.sqlite
+*.sqlite3
+db.sqlite3
+*.db-journal
+
+# Django collected static files
+staticfiles/
+static_root/
+/static/
+/media/
+
+# Django cache and session files
+django_cache/
+.cache/
+
+# ===================================
+# SSL/TLS CERTIFICATES AND KEYS
+# ===================================
+# Never commit SSL certificates, private keys, or CA files
+*.pem
+*.key
+*.crt
+*.cert
+*.ca-bundle
+*.p12
+*.pfx
+ssl/
+certs/
+certificates/
+private/
+
+# ===================================
+# LOGS AND DEBUG FILES
+# ===================================
+# Log files may contain sensitive information
+*.log
+logs/
+debug.log
+error.log
+access.log
+django.log
+security.log
+
+# ===================================
+# BACKUP AND TEMPORARY FILES
+# ===================================
+# Database backups and dumps
+*.sql
+*.dump
+*.bak
+backup/
+backups/
+dumps/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# ===================================
+# PYTHON SPECIFIC
+# ===================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+.ENV/
+.env/
+
+# ===================================
+# IDE AND EDITOR FILES
+# ===================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# ===================================
+# SECURITY AND CREDENTIALS
+# ===================================
+# API keys and tokens
+*.token
+*.key
+api_keys.txt
+secrets.txt
+credentials.json
+service-account.json
+
+# OAuth and authentication files
+.oauth
+oauth.json
+client_secret*.json
+
+# Password files
+passwords.txt
+.htpasswd
+
+# ===================================
+# DJANGO REST FRAMEWORK SPECIFIC
+# ===================================
+# Session data
+sessions/
+
+# ===================================
+# SECURITY NOTES
+# ===================================
+# This .gitignore protects:
+# 1. Environment variables and configuration files
+# 2. Database files containing user data
+# 3. SSL certificates and private keys
+# 4. Authentication tokens and API keys
+# 5. Log files that may contain sensitive information
+# 6. Backup files and database dumps
+# 7. Development and testing artifacts
+#
+# IMPORTANT SECURITY PRACTICES:
+# - Always use environment variables for secrets
+# - Never hardcode API keys or passwords in code
+# - Review files before committing with 'git status'
+# - Use 'git-secrets' tool for additional protection
+# - Regularly audit repository for accidentally committed secrets
